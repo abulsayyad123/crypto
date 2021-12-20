@@ -23,8 +23,14 @@ defmodule WebsockexDemo.SfoxFetchData do
     {:reply, {:text, Jason.encode!(subscription)}, state}
   end
 
-  def handle_frame({_type, msg}, state) do
-    IO.puts "#{inspect msg}"
+  def handle_frame({type, msg}, state) do
+    IO.puts "Received Message - Type: #{inspect type} -- Message: #{inspect msg}"
+    message = {:fetched_crypto, Jason.decode!(msg)}
+    Phoenix.PubSub.broadcast(
+      WebsockexDemo.PubSub,
+      "crypto",
+      message
+    )
     {:ok, state}
   end
 
